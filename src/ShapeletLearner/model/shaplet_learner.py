@@ -30,26 +30,34 @@ class ShapletLearner(nn.Module):
 
         self.loss_fn = torch.nn.CrossEntropyLoss() ## This is what they used not sure why not BCE with logit but eh
 
-    def _compute_shapelet_dist(self, ts):
-        shapelet_distances = [] 
-        for shapelet in self.shapelets:
-            num_segments = self.Q - self.K + 1
-            distances = []
-            for j in range(num_segments):
-                segment = ts[:, j:j+self.K] 
-                segment = segment
-                dist = torch.mean((segment - shapelet)**2, dim = 1)
-                if torch.isnan(dist).any():
-                    print("NaN detected in distance calculation")
-                distances.append(dist)
-            distances = torch.stack(distances, dim = 1)
+    def _compute_shapelet_dist(self, ts, type = "euclid"):
+        assert type in ["euclid", "DTW"]
 
-            hard_min, _ = torch.min(distances, dim=1)
-            if torch.isnan(hard_min).any():
-                print("NaN detected in min operation") 
-            shapelet_distances.append(hard_min)
+        if type == "euclid":
+            shapelet_distances = [] 
+            for shapelet in self.shapelets:
+                num_segments = self.Q - self.K + 1
+                distances = []
+                for j in range(num_segments):
+                    segment = ts[:, j:j+self.K] 
+                    segment = segment
+                    dist = torch.mean((segment - shapelet)**2, dim = 1)
+                    if torch.isnan(dist).any():
+                        print("NaN detected in distance calculation")
+                    distances.append(dist)
+                distances = torch.stack(distances, dim = 1)
 
-        result =  torch.stack(shapelet_distances, dim = 1) 
+                hard_min, _ = torch.min(distances, dim=1)
+                if torch.isnan(hard_min).any():
+                    print("NaN detected in min operation") 
+                shapelet_distances.append(hard_min)
+
+            result =  torch.stack(shapelet_distances, dim = 1) 
+        elif type == "DTW":
+            pass
+        
+        
+
         if torch.isnan(result).any():
             print("NaN detected in final Shapelet distance")
         return torch.stack(shapelet_distances, dim = 1) 
