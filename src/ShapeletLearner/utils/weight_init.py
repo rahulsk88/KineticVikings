@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.cluster import KMeans
 
+
 def extract_segments(timeseries_data, segment_length):
     _, time_series_length = timeseries_data.shape
     segments = []
@@ -9,7 +10,7 @@ def extract_segments(timeseries_data, segment_length):
         for i in range(num_segments):
             segment = ts[i:i+segment_length]
             segments.append(segment)
-    
+
     return np.array(segments)
 
 
@@ -17,4 +18,4 @@ def shapelet_initialization(timeseries_data, num_shapelets, shapelet_length):
     segments = extract_segments(timeseries_data, shapelet_length)
     kmeans = KMeans(n_clusters=num_shapelets, random_state=42)
     kmeans.fit(segments)
-    return kmeans.cluster_centers_ 
+    return kmeans.cluster_centers_
