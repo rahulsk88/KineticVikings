@@ -2,8 +2,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional
 
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.getcwd(), "../")))
 
-from ..utils.DTW import *
+from utils.DTW import *
 
 
 class ShapletLearner(nn.Module):
