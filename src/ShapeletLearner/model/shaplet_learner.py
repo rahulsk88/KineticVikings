@@ -61,7 +61,6 @@ class ShapletLearner(nn.Module):
         )  ## This is what they used not sure why not BCE with logit but eh
 
     def _compute_shapelet_dist(self, ts):
-        print(ts.shape)
 
         shapelet_distances = []
         if self.type_dist == "euclid":
@@ -71,7 +70,6 @@ class ShapletLearner(nn.Module):
                 distances = []
                 for j in range(num_segments):
                     segment = ts[:, j : j + self.K]
-                    segment = segment
                     dist = torch.mean((segment - shapelet) ** 2, dim=1)
                     if torch.isnan(dist).any():
                         print("NaN detected in distance calculation")
